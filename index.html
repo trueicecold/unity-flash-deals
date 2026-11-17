@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unity Flash Deals</title>
+<meta name="description" content="Every Unity Asset Store flash deal: what's live now, what's next, and when prices change.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M18 2 6 18h8l-2 12 12-16h-8z' fill='%23ffb020'/></svg>">
+<style>
+:root {
+    --bg: #f4f5f7;
+    --surface: #ffffff;
+    --surface-2: #eef0f3;
+    --border: #dde1e6;
+    --text: #15181d;
+    --muted: #5d6573;
+    --accent: #d97a00;
+    --accent-soft: #fff1dc;
+    --live: #0b8a4a;
+    --live-soft: #ddf5e8;
+    --upcoming: #3a5bd9;
+    --upcoming-soft: #e3e9ff;
+    --strike: #8a919c;
+    --shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 1px 3px rgba(16, 24, 40, .08);
+}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --bg: #0f1115;
+        --surface: #181b21;
+        --surface-2: #20242c;
+        --border: #2a2f39;
+        --text: #e9ecf1;
+        --muted: #98a1b0;
+        --accent: #ffb020;
+        --accent-soft: #3a2a0c;
+        --live: #3ddc84;
+        --live-soft: #123222;
+        --upcoming: #8ea6ff;
+        --upcoming-soft: #1c2444;
+        --strike: #6d7583;
+        --shadow: none;
+    }
+}
+:root[data-theme="dark"] {
+    --bg: #0f1115;
+    --surface: #181b21;
+    --surface-2: #20242c;
+    --border: #2a2f39;
+    --text: #e9ecf1;
+    --muted: #98a1b0;
+    --accent: #ffb020;
+    --accent-soft: #3a2a0c;
+    --live: #3ddc84;
+    --live-soft: #123222;
+    --upcoming: #8ea6ff;
+    --upcoming-soft: #1c2444;
+    --strike: #6d7583;
+    --shadow: none;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+a { color: inherit; }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 0 16px; }
+
+header { padding: 28px 0 12px; }
+.title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+h1 { margin: 0; font-size: 26px; letter-spacing: -.02em; display: flex; align-items: center; gap: 8px; }
+h1 svg { width: 26px; height: 26px; flex: none; }
+.meta { color: var(--muted); font-size: 13px; margin-top: 6px; }
+.meta .warn { color: var(--accent); font-weight: 600; }
+
+.summary { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0 4px; }
+.stat {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 14px; min-width: 150px; box-shadow: var(--shadow);
+}
+.stat .label { font-size: 12px; color: var(--muted); }
+.stat .value { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.controls {
+    position: sticky; top: 0; z-index: 5; background: var(--bg);
+    padding: 12px 0; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+.controls input, .controls select, .seg button {
+    font: inherit; color: var(--text); background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px; height: 36px; padding: 0 10px;
+}
+.controls input[type="search"] { flex: 1 1 220px; min-width: 0; }
+.seg { display: inline-flex; }
+.seg button { cursor: pointer; border-radius: 0; margin-left: -1px; }
+.seg button:first-child { border-radius: 8px 0 0 8px; margin-left: 0; }
+.seg button:last-child { border-radius: 0 8px 8px 0; }
+.seg button[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); position: relative; }
+.result-count { color: var(--muted); font-size: 13px; margin-left: auto; }
+
+.grid {
+    display: grid; gap: 14px; padding: 16px 0 40px;
+    grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+}
+.card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow);
+}
+.thumb { position: relative; display: block; aspect-ratio: 420 / 280; background: var(--surface-2); }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.badge {
+    position: absolute; top: 8px; left: 8px; font-size: 12px; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px; letter-spacing: .01em;
+}
+.badge.live { background: var(--live-soft); color: var(--live); }
+.badge.upcoming { background: var(--upcoming-soft); color: var(--upcoming); }
+.badge.sale { background: var(--surface); color: var(--muted); }
+.body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.name { font-weight: 600; line-height: 1.3; text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.name:hover { text-decoration: underline; }
+.sub { color: var(--muted); font-size: 12px; display: flex; gap: 6px; flex-wrap: wrap; }
+.sub .dot::before { content: "·"; margin-right: 6px; }
+.price-row { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+.now-price { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.orig { color: var(--strike); text-decoration: line-through; font-variant-numeric: tabular-nums; }
+.off { font-weight: 700; color: var(--accent); }
+.countdown { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.countdown b { color: var(--text); }
+.next {
+    font-size: 13px; background: var(--surface-2); border-radius: 8px; padding: 6px 8px;
+    display: flex; flex-direction: column; font-variant-numeric: tabular-nums;
+}
+.next .when { color: var(--muted); font-size: 12px; }
+details { font-size: 12px; margin-top: auto; }
+summary { cursor: pointer; color: var(--muted); padding: 2px 0; }
+.timeline { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 2px; }
+.timeline li {
+    display: grid; grid-template-columns: 1fr auto auto; gap: 8px; padding: 3px 6px;
+    border-radius: 6px; font-variant-numeric: tabular-nums;
+}
+.timeline li.current { background: var(--accent-soft); font-weight: 600; }
+.timeline .flash-tag { color: var(--accent); }
+.empty { text-align: center; color: var(--muted); padding: 60px 0; }
+footer { color: var(--muted); font-size: 12px; padding: 0 0 32px; }
+
+@media (max-width: 520px) {
+    h1 { font-size: 22px; }
+    .stat { min-width: 0; flex: 1 1 40%; }
+    .stat .value { font-size: 18px; }
+    .controls input[type="search"] { flex-basis: 100%; }
+    .seg { flex: 1 1 100%; }
+    .seg button { flex: 1; }
+    .controls select { flex: 1 1 30%; min-width: 0; }
+    .result-count { width: 100%; margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <header>
+        <div class="title-row">
+            <h1>
+                <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M18 2 6 18h8l-2 12 12-16h-8z" fill="var(--accent)"/></svg>
+                Unity Flash Deals
+            </h1>
+        </div>
+        <div class="meta" id="meta">Loading deals…</div>
+        <div class="summary" id="summary"></div>
+    </header>
+
+    <div class="controls">
+        <input type="search" id="q" placeholder="Search assets or publishers" aria-label="Search">
+        <div class="seg" role="group" aria-label="Status">
+            <button data-status="live" aria-pressed="true">Flash now</button>
+            <button data-status="upcoming" aria-pressed="false">Upcoming</button>
+            <button data-status="all" aria-pressed="false">All</button>
+        </div>
+        <select id="category" aria-label="Category"><option value="">All categories</option></select>
+        <select id="sort" aria-label="Sort">
+            <option value="discount">Biggest discount</option>
+            <option value="ending">Ending / starting soonest</option>
+            <option value="price-asc">Lowest price</option>
+            <option value="price-desc">Highest price</option>
+            <option value="rating">Top rated</option>
+            <option value="name">Name</option>
+        </select>
+        <select id="currency" aria-label="Currency">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+        </select>
+        <span class="result-count" id="count"></span>
+    </div>
+
+    <main class="grid" id="grid"></main>
+    <footer>Not affiliated with Unity Technologies. Prices come from the Asset Store's public search data and may change — always check the store before buying.</footer>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    const SYMBOL = { USD: '$', EUR: '€' };
+    const STORE = (() => { try { return window.localStorage; } catch (e) { return null; } })();
+    const saved = (k, d) => { try { return (STORE && STORE.getItem('ufd.' + k)) || d; } catch (e) { return d; } };
+    const save = (k, v) => { try { STORE && STORE.setItem('ufd.' + k, v); } catch (e) { /* ignore */ } };
+
+    const state = {
+        q: '',
+        status: saved('status', 'live'),
+        category: '',
+        sort: saved('sort', 'discount'),
+        currency: saved('currency', 'USD'),
+    };
+    let data = null;
+
+    const $ = (id) => document.getElementById(id);
+    const el = (tag, cls, text) => {
+        const n = document.createElement(tag);
+        if (cls) n.className = cls;
+        if (text != null) n.textContent = text;
+        return n;
+    };
+
+    // ---------- pricing model ----------
+    // Sale tiers can overlap (a long regular sale with short flash windows on top).
+    // The price in effect at time t is the active tier that started most recently.
+    const ms = (s) => (s ? Date.parse(s) : Infinity);
+
+    function tierAt(deal, t) {
+        let best = null;
+        for (const tier of deal._tiers) {
+            if (tier._s <= t && t < tier._e && (!best || tier._s >= best._s)) best = tier;
+        }
+        return best;
+    }
+
+    // Consecutive periods [from, to) with the tier in effect (null = full price).
+    function segments(deal) {
+        const points = new Set();
+        for (const tier of deal._tiers) {
+            points.add(tier._s);
+            if (isFinite(tier._e)) points.add(tier._e);
+        }
+        const sorted = [...points].sort((a, b) => a - b);
+        const segs = [];
+        for (let i = 0; i < sorted.length; i++) {
+            const from = sorted[i];
+            const to = i + 1 < sorted.length ? sorted[i + 1] : Infinity;
+            const tier = tierAt(deal, from);
+            const last = segs[segs.length - 1];
+            if (last && last.tier === tier) { last.to = to; continue; }
+            segs.push({ from, to, tier });
+        }
+        // Drop a trailing open-ended full-price period; it's implied.
+        while (segs.length && !segs[segs.length - 1].tier && segs[segs.length - 1].to === Infinity) segs.pop();
+        return segs;
+    }
+
+    function priceOf(deal, tier, cur) {
+        if (!tier) return deal.price;
+        const p = tier.prices && tier.prices[cur];
+        if (p != null) return p;
+        if (tier.discount != null && cur === 'USD' && deal.price != null) return deal.price * (1 - tier.discount);
+        return null;
+    }
+    function origPrice(deal, cur) {
+        if (cur === 'USD') return deal.price;
+        // Derive the original in another currency from any tier with both price and discount.
+        for (const t of deal._tiers) {
+            const p = t.prices && t.prices[cur];
+            if (p != null && t.discount != null && t.discount < 1) return p / (1 - t.discount);
+        }
+        return null;
+    }
+    const pctOf = (tier) => (tier && tier.discount != null ? Math.round(tier.discount * 100) : null);
+
+    function analyze(deal, now) {
+        const segs = segments(deal);
+        const idx = segs.findIndex((s) => s.from <= now && now < s.to);
+        const current = idx >= 0 ? segs[idx] : null;
+        const upcoming = segs.filter((s) => s.from > now);
+        const next = upcoming[0] || null;
+        const nextFlash = upcoming.find((s) => s.tier && s.tier.flash) || null;
+        const liveFlash = !!(current && current.tier && current.tier.flash);
+        let status = 'ended';
+        if (liveFlash) status = 'live';
+        else if (nextFlash) status = 'upcoming';
+        return { segs, current, next, nextFlash, liveFlash, status };
+    }
+
+    // ---------- formatting ----------
+    const fmtMoney = (v, cur) => (v == null ? '—' : (SYMBOL[cur] || cur + ' ') + Number(v).toFixed(2));
+    const dateFmt = new Intl.DateTimeFormat(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const fmtDate = (t) => (isFinite(t) ? dateFmt.format(new Date(t)) : '—');
+    function fmtDur(msLeft) {
+        if (!isFinite(msLeft)) return '—';
+        const s = Math.max(0, Math.floor(msLeft / 1000));
+        const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+        if (d) return `${d}d ${h}h ${m}m`;
+        if (h) return `${h}h ${m}m ${String(sec).padStart(2, '0')}s`;
+        return `${m}m ${String(sec).padStart(2, '0')}s`;
+    }
+    const titleCase = (s) => s.replace(/(^|[\s>/-])(\w)/g, (m, a, b) => a + b.toUpperCase())
+        .replace(/\b(2d|3d|Vfx|Ai)\b/gi, (m) => m.toUpperCase());
+    const prettySub = (s) => titleCase(s.split('>').pop().trim());
+
+    // ---------- rendering ----------
+    function buildCard(deal, a, now) {
+        const cur = state.currency;
+        const card = el('article', 'card');
+
+        const thumb = el('a', 'thumb');
+        thumb.href = deal.url; thumb.target = '_blank'; thumb.rel = 'noopener';
+        if (deal.thumb) {
+            const img = el('img');
+            img.src = deal.thumb; img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
+            thumb.appendChild(img);
+        }
+        let badge;
+        if (a.liveFlash) badge = el('span', 'badge live', `⚡ Flash −${pctOf(a.current.tier)}%`);
+        else if (a.nextFlash) badge = el('span', 'badge upcoming', `Flash −${pctOf(a.nextFlash.tier)}% soon`);
+        else badge = el('span', 'badge sale', 'Flash ended');
+        thumb.appendChild(badge);
+        card.appendChild(thumb);
+
+        const body = el('div', 'body');
+        const name = el('a', 'name', deal.name);
+        name.href = deal.url; name.target = '_blank'; name.rel = 'noopener';
+        body.appendChild(name);
+
+        const sub = el('div', 'sub');
+        sub.appendChild(el('span', '', deal.publisher));
+        if (deal.subcategory || deal.category) sub.appendChild(el('span', 'dot', prettySub(deal.subcategory || deal.category)));
+        if (deal.ratingCount) sub.appendChild(el('span', 'dot', `★ ${deal.rating.toFixed(1)} (${deal.ratingCount})`));
+        body.appendChild(sub);
+
+        const curTier = a.current ? a.current.tier : null;
+        const priceRow = el('div', 'price-row');
+        priceRow.appendChild(el('span', 'now-price', fmtMoney(priceOf(deal, curTier, cur), cur)));
+        if (curTier) {
+            priceRow.appendChild(el('span', 'orig', fmtMoney(origPrice(deal, cur), cur)));
+            if (pctOf(curTier) != null) priceRow.appendChild(el('span', 'off', `−${pctOf(curTier)}%`));
+        }
+        body.appendChild(priceRow);
+
+        // Countdown to the next price change.
+        const cd = el('div', 'countdown');
+        if (a.current && isFinite(a.current.to)) {
+            cd.append('Price changes in ');
+            const b = el('b'); b.dataset.until = a.current.to; b.textContent = fmtDur(a.current.to - now);
+            cd.appendChild(b);
+        } else if (a.next) {
+            cd.append('Sale starts in ');
+            const b = el('b'); b.dataset.until = a.next.from; b.textContent = fmtDur(a.next.from - now);
+            cd.appendChild(b);
+        }
+        if (cd.childNodes.length) body.appendChild(cd);
+
+        if (a.next) {
+            const nx = el('div', 'next');
+            const left = el('span');
+            left.append('Next: ');
+            const strong = el('strong', '', fmtMoney(priceOf(deal, a.next.tier, cur), cur));
+            left.appendChild(strong);
+            const pct = pctOf(a.next.tier);
+            if (pct != null) left.append(` (−${pct}%${a.next.tier.flash ? ' ⚡' : ''})`);
+            else if (!a.next.tier) left.append(' (full price)');
+            nx.appendChild(left);
+            nx.appendChild(el('span', 'when', `from ${fmtDate(a.next.from)}`));
+            body.appendChild(nx);
+        }
+
+        const visible = a.segs.filter((s) => s.to > now);
+        if (visible.length > 1) {
+            const det = el('details');
+            det.appendChild(el('summary', '', `Price schedule (${visible.length})`));
+            const ul = el('ul', 'timeline');
+            for (const s of visible) {
+                const li = el('li', s === a.current ? 'current' : '');
+                li.appendChild(el('span', '', `${fmtDate(s.from)} → ${isFinite(s.to) ? fmtDate(s.to) : 'open'}`));
+                const pct = pctOf(s.tier);
+                li.appendChild(el('span', s.tier && s.tier.flash ? 'flash-tag' : '', s.tier ? (pct != null ? `−${pct}%${s.tier.flash ? ' ⚡' : ''}` : 'sale') : 'full'));
+                li.appendChild(el('span', '', fmtMoney(priceOf(deal, s.tier, cur), cur)));
+                ul.appendChild(li);
+            }
+            det.appendChild(ul);
+            body.appendChild(det);
+        }
+
+        card.appendChild(body);
+        return card;
+    }
+
+    function sortKey(deal, a, now) {
+        const cur = state.currency;
+        const tier = a.liveFlash ? a.current.tier : a.nextFlash ? a.nextFlash.tier : (a.current && a.current.tier);
+        switch (state.sort) {
+            case 'discount': return -(tier && tier.discount != null ? tier.discount : 0);
+            case 'ending': return a.liveFlash ? a.current.to : a.nextFlash ? a.nextFlash.from : Infinity;
+            case 'price-asc': return priceOf(deal, tier, cur) ?? Infinity;
+            case 'price-desc': return -(priceOf(deal, tier, cur) ?? 0);
+            case 'rating': return -(deal.rating * 1000 + Math.min(deal.ratingCount, 999));
+            default: return 0;
+        }
+    }
+
+    function render() {
+        if (!data) return;
+        const now = Date.now();
+        const q = state.q.trim().toLowerCase();
+        const rows = [];
+        let live = 0, upcoming = 0, best = 0, nextChange = Infinity;
+
+        for (const deal of data.deals) {
+            const a = analyze(deal, now);
+            if (a.status === 'live') live++;
+            if (a.status === 'upcoming') upcoming++;
+            if (a.liveFlash) best = Math.max(best, pctOf(a.current.tier) || 0);
+            if (a.liveFlash) nextChange = Math.min(nextChange, a.current.to);
+            if (a.nextFlash) nextChange = Math.min(nextChange, a.nextFlash.from);
+
+            if (a.status === 'ended') continue;
+            if (state.status !== 'all' && a.status !== state.status) continue;
+            if (state.category && deal.category !== state.category) continue;
+            if (q && !(deal.name.toLowerCase().includes(q) || deal.publisher.toLowerCase().includes(q))) continue;
+            rows.push({ deal, a, key: sortKey(deal, a, now) });
+        }
+
+        rows.sort((x, y) => (x.key - y.key) || x.deal.name.localeCompare(y.deal.name));
+
+        const summary = $('summary');
+        summary.replaceChildren();
+        const stat = (label, value, until) => {
+            const s = el('div', 'stat');
+            s.appendChild(el('div', 'label', label));
+            const v = el('div', 'value', value);
+            if (until != null) v.dataset.until = until;
+            s.appendChild(v);
+            summary.appendChild(s);
+        };
+        stat('Flash deals live', String(live));
+        stat('Upcoming flash deals', String(upcoming));
+        stat('Best live discount', best ? `−${best}%` : '—');
+        stat('Next flash change in', fmtDur(nextChange - now), isFinite(nextChange) ? nextChange : null);
+
+        const grid = $('grid');
+        grid.replaceChildren();
+        if (!rows.length) {
+            grid.appendChild(el('div', 'empty', 'No deals match these filters.'));
+        } else {
+            const frag = document.createDocumentFragment();
+            for (const r of rows) frag.appendChild(buildCard(r.deal, r.a, now));
+            grid.appendChild(frag);
+        }
+        $('count').textContent = `${rows.length} asset${rows.length === 1 ? '' : 's'}`;
+        nextBoundary = nextChange;
+    }
+
+    // Tick countdowns every second; re-render when any price boundary passes.
+    let nextBoundary = Infinity;
+    function tick() {
+        const now = Date.now();
+        const timers = document.querySelectorAll('[data-until]');
+        if (now >= nextBoundary || [...timers].some((n) => Number(n.dataset.until) <= now)) {
+            render();
+            return;
+        }
+        for (const n of timers) n.textContent = fmtDur(Number(n.dataset.until) - now);
+    }
+
+    // ---------- controls ----------
+    function syncControls() {
+        for (const b of document.querySelectorAll('.seg button')) b.setAttribute('aria-pressed', String(b.dataset.status === state.status));
+        $('sort').value = state.sort;
+        $('currency').value = state.currency;
+    }
+    $('q').addEventListener('input', (e) => { state.q = e.target.value; render(); });
+    for (const b of document.querySelectorAll('.seg button')) {
+        b.addEventListener('click', () => { state.status = b.dataset.status; save('status', state.status); syncControls(); render(); });
+    }
+    $('category').addEventListener('change', (e) => { state.category = e.target.value; render(); });
+    $('sort').addEventListener('change', (e) => { state.sort = e.target.value; save('sort', state.sort); render(); });
+    $('currency').addEventListener('change', (e) => { state.currency = e.target.value; save('currency', state.currency); render(); });
+
+    // ---------- load ----------
+    fetch('deals.json', { cache: 'no-cache' })
+        .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then((json) => {
+            for (const d of json.deals) {
+                d._tiers = d.tiers.map((t) => Object.assign({}, t, { _s: ms(t.starts), _e: ms(t.ends) }));
+            }
+            data = json;
+
+            const cats = [...new Set(json.deals.map((d) => d.category).filter(Boolean))].sort();
+            for (const c of cats) {
+                const o = el('option', '', titleCase(c));
+                o.value = c;
+                $('category').appendChild(o);
+            }
+
+            const gen = Date.parse(json.generatedAt);
+            const meta = $('meta');
+            meta.replaceChildren(`${json.deals.length} flash-deal assets · data updated ${fmtDate(gen)} · times shown in your local time zone`);
+            if (Date.now() - gen > 36 * 3600 * 1000) {
+                meta.append(' · ');
+                meta.appendChild(el('span', 'warn', 'data may be out of date'));
+            }
+
+            syncControls();
+            render();
+            setInterval(tick, 1000);
+        })
+        .catch((err) => {
+            $('meta').textContent = `Could not load deals.json (${err.message}). Run "node fetch-deals.mjs" next to this page, and serve it over http(s).`;
+        });
+})();
+</script>
+</body>
+</html>
