@@ -426,10 +426,13 @@ footer { color: var(--muted); font-size: 12px; padding: 0 0 32px; }
             if (state.status !== 'all' && a.status !== state.status) continue;
             if (state.category && deal.category !== state.category) continue;
             if (q && !(deal.name.toLowerCase().includes(q) || deal.publisher.toLowerCase().includes(q))) continue;
-            rows.push({ deal, a, key: sortKey(deal, a, now) });
+            // "Soonest": when the live flash ends, or when the upcoming one starts.
+            const soon = a.liveFlash ? a.current.to : a.nextFlash ? a.nextFlash.from : Infinity;
+            rows.push({ deal, a, key: sortKey(deal, a, now), soon });
         }
 
-        rows.sort((x, y) => (x.key - y.key) || x.deal.name.localeCompare(y.deal.name));
+        const diff = (p, q) => (p === q ? 0 : p < q ? -1 : 1); // safe with Infinity
+        rows.sort((x, y) => diff(x.key, y.key) || diff(x.soon, y.soon) || x.deal.name.localeCompare(y.deal.name));
 
         const summary = $('summary');
         summary.replaceChildren();
